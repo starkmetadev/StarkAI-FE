@@ -12,22 +12,22 @@ import {
   SolanaDefault,
 } from "../assets";
 
-const ImageNumberGroup = [1, 2, 3, 4, 5, 6, 7, 8];
+const FixedImageNumberGroup = [1, 2, 3, 4, 5, 6, 7, 8];
 const ImageDimensionsGroup = [
-  "512 * 512",
-  "768 * 768",
-  "512 * 1024",
-  "768 * 1024",
-  "1024 * 768",
-  "1024 * 1024",
+  { id: 1, dimension: "512 * 512" },
+  { id: 2, dimension: "768 * 768" },
+  { id: 3, dimension: "512 * 1024" },
+  { id: 4, dimension: "768 * 1024" },
+  { id: 5, dimension: "1024 * 768" },
+  { id: 6, dimension: "1024 * 1024" },
 ];
 const InputDimensionsGroup = [
-  "512 * 768",
-  "768 * 512",
-  "1024 * 768",
-  "768 * 1024",
-  "1360 * 768",
-  "768 * 1360",
+  { id: 1, dimension: "512 * 768" },
+  { id: 2, dimension: "768 * 512" },
+  { id: 3, dimension: "1024 * 768" },
+  { id: 4, dimension: "768 * 1024" },
+  { id: 5, dimension: "1360 * 768" },
+  { id: 6, dimension: "768 * 1360" },
 ];
 
 export interface ModelItem {
@@ -164,7 +164,7 @@ const chains: ChainConfig[] = [
 
 export {
   ImageDimensionsGroup,
-  ImageNumberGroup,
+  FixedImageNumberGroup,
   InputDimensionsGroup,
   ModelItems,
   AlchemyStyle,

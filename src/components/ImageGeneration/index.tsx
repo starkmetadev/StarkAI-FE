@@ -1,11 +1,21 @@
-import { Icon } from "@iconify/react";
-import { Link } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { Icon } from "@iconify/react";
+
 import CollapsibleSection from "./CollapsibleSection";
-import { ReactComponent as DocumentSVG } from "../../assets/document.svg";
 import TabButton from "../Others/TabButton";
+import { useUser } from "../../context/UserContext";
+import ModalImgCard from "../Modal/ModalImgCard";
+import GenerationHistory from "./GenerationHistory";
+import ImageGuidance from "./ImageGuidance";
+import { TextareaAutosize } from "@mui/material";
+import axios from "axios";
+
+import { ReactComponent as DocumentSVG } from "../../assets/document.svg";
+import { Image } from "../../utils/types";
+import useOutsideClick from "../../utils/useOutsideClick";
 import {
-  ImageNumberGroup,
+  FixedImageNumberGroup,
   InputDimensionsGroup,
   ImageDimensionsGroup,
   ModelItems,
@@ -14,15 +24,7 @@ import {
   AlchemyStyle,
   photoRealStyle,
 } from "../../utils/constants";
-import { useUser } from "../../context/UserContext";
-import axios from "axios";
-import { Image } from "../../utils/types";
-
-import useOutsideClick from "../../utils/useOutsideClick";
-import ModalImgCard from "../Modal/ModalImgCard";
-import GenerationHistory from "./GenerationHistory";
-import ImageGuidance from "./ImageGuidance";
-import { TextareaAutosize } from "@mui/material";
+import findDimensionById from "../../utils/findDimensionById";
 
 const userSelectedModelItem: ModelItem = {
   id: "1e60896f-3c26-4296-8ecc-53e2afecc132",
@@ -46,7 +48,7 @@ const ImageGeneration = () => {
   const [photoReal, setPhotoReal] = useState<boolean>(false);
   const [alchemy, setAlchemy] = useState<boolean>(true);
   const [promptMagic, setPromptMagic] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState("1024 * 768");
+  const [selectedOption, setSelectedOption] = useState(1);
   const [selectedNumber, setSelectedNumber] = useState<number>(1);
   const [generationModel, setGenerationModel] = useState<ModelItem | null>(
     userSelectedModelItem
@@ -63,6 +65,7 @@ const ImageGeneration = () => {
   const [densityValue, setDensityValue] = useState<number>(50);
   const uploadImgRef = useRef<HTMLInputElement>(null);
 
+  const isChangeable = (option: number) => option > 4;
   const handleUpload = () => {
     uploadImgRef.current?.click();
   };
@@ -115,6 +118,7 @@ const ImageGeneration = () => {
 
   const handleImageNumberChange = (option: number) => {
     const numberValue = option;
+
     setSelectedNumber(numberValue);
   };
 
@@ -139,46 +143,54 @@ const ImageGeneration = () => {
   };
 
   const handleGenerate = async () => {
-    setGenerating(true);
-    var res;
-    if (activeTab === "generationHistory") {
-      const data = {
-        user: JSON.parse(user).email,
-        text: promptText,
-        model: generationModel?.id,
-        alchemy: alchemy,
-        presetStyle: generationStyle,
-        numberOfImages: selectedNumber,
-        dimension: selectedOption,
-      };
-      res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_API}/generate/text-to-image`,
-        data
-      );
-    } else {
-      const data = new FormData();
-      data.append("user", JSON.parse(user).email);
-      data.append("text", promptText);
-      data.append("model", generationModel?.id || "");
-      data.append("alchemy", alchemy ? "true" : "false");
-      data.append("presetStyle", generationStyle);
-      data.append("numberOfImages", selectedNumber.toString());
-      data.append("dimension", selectedOption);
-      data.append("density", densityValue.toString());
-      data.append("image", imageSrc || "");
-      console.log(data);
-      res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_API}/generate/image-to-image`,
-        data
-      );
-    }
-    if (res.data.message === "Success") {
-      console.log("Success");
-    } else {
-      console.log("Failed");
-    }
-    setGenerating(false);
-    updateLibrary();
+    console.log(
+      "Dimension:",
+      findDimensionById(selectedOption, dimensionsGroup),
+      selectedNumber
+    );
+    // setGenerating(true);
+    // var res;
+    // if (activeTab === "generationHistory") {
+    //   const data = {
+    //     user: JSON.parse(user).email,
+    //     text: promptText,
+    //     model: generationModel?.id,
+    //     alchemy: alchemy,
+    //     presetStyle: generationStyle,
+    //     numberOfImages: selectedNumber,
+    //     dimension: findDimensionById(selectedOption, dimensionsGroup),
+    //   };
+    //   res = await axios.post(
+    //     `${process.env.REACT_APP_BACKEND_API}/generate/text-to-image`,
+    //     data
+    //   );
+    // } else {
+    //   const data = new FormData();
+    //   data.append("user", JSON.parse(user).email);
+    //   data.append("text", promptText);
+    //   data.append("model", generationModel?.id || "");
+    //   data.append("alchemy", alchemy ? "true" : "false");
+    //   data.append("presetStyle", generationStyle);
+    //   data.append("numberOfImages", selectedNumber.toString());
+    //   data.append(
+    //     "dimension",
+    //     findDimensionById(selectedOption, dimensionsGroup)
+    //   );
+    //   data.append("density", densityValue.toString());
+    //   data.append("image", imageSrc || "");
+    //   console.log(data);
+    //   res = await axios.post(
+    //     `${process.env.REACT_APP_BACKEND_API}/generate/image-to-image`,
+    //     data
+    //   );
+    // }
+    // if (res.data.message === "Success") {
+    //   console.log("Success");
+    // } else {
+    //   console.log("Failed");
+    // }
+    // setGenerating(false);
+    // updateLibrary();
   };
 
   const updateLibrary = () => {
@@ -199,6 +211,10 @@ const ImageGeneration = () => {
     if (imageData.length > 0) return;
     updateLibrary();
   });
+
+  useEffect(() => {
+    if (selectedOption > 2 && selectedNumber > 4) setSelectedNumber(4);
+  }, [selectedOption, selectedNumber]);
 
   return (
     <>
@@ -426,13 +442,21 @@ const ImageGeneration = () => {
             >
               <div className="pe-0 p-0 overflow-visible">
                 <div className="image-board grid-4">
-                  {ImageNumberGroup.map((option) => (
+                  {FixedImageNumberGroup.map((option) => (
                     <div
                       key={option}
                       className={`image-radio-board ${
                         selectedNumber === option ? "image-radio-checked" : ""
+                      } ${
+                        isChangeable(option) && selectedOption > 2
+                          ? "cursor-not-allowed opacity-50"
+                          : "opacity-100"
                       }`}
-                      onClick={() => handleImageNumberChange(option)}
+                      onClick={() => {
+                        if (!isChangeable(option) || selectedOption <= 2) {
+                          handleImageNumberChange(option);
+                        }
+                      }}
                     >
                       {option}
                     </div>

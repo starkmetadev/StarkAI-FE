@@ -1,13 +1,18 @@
 import React from "react";
 import { Icon } from "@iconify/react";
 
+export interface optionsGroupProps {
+  id: number;
+  dimension: string;
+}
+
 interface CollapsibleSectionProps {
   title: string;
-  optionsGroup: string[];
+  optionsGroup: optionsGroupProps[];
   isDimensionOpened: boolean;
   setIsDimensionOpened: (isOpen: boolean) => void;
-  selectedOption: string;
-  setSelectedOption: (value: string) => void;
+  selectedOption: number;
+  setSelectedOption: (value: number) => void;
 }
 
 const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
@@ -47,17 +52,17 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                 <input
                   type="radio"
                   name="image-dimension-group"
-                  value={option}
-                  checked={selectedOption === option}
-                  onChange={() => setSelectedOption(option)}
+                  value={option.dimension}
+                  checked={selectedOption === option.id}
+                  onChange={() => setSelectedOption(option.id)}
                   className="image-radio"
                 ></input>
                 <div
                   className={`image-radio-board ${
-                    selectedOption === option ? "image-radio-checked" : ""
+                    selectedOption === option.id ? "image-radio-checked" : ""
                   }`}
                 >
-                  {option}
+                  {option.dimension}
                 </div>
               </label>
             ))}
