@@ -118,7 +118,6 @@ const ImageGeneration = () => {
 
   const handleImageNumberChange = (option: number) => {
     const numberValue = option;
-
     setSelectedNumber(numberValue);
   };
 
@@ -143,54 +142,49 @@ const ImageGeneration = () => {
   };
 
   const handleGenerate = async () => {
-    console.log(
-      "Dimension:",
-      findDimensionById(selectedOption, dimensionsGroup),
-      selectedNumber
-    );
-    // setGenerating(true);
-    // var res;
-    // if (activeTab === "generationHistory") {
-    //   const data = {
-    //     user: JSON.parse(user).email,
-    //     text: promptText,
-    //     model: generationModel?.id,
-    //     alchemy: alchemy,
-    //     presetStyle: generationStyle,
-    //     numberOfImages: selectedNumber,
-    //     dimension: findDimensionById(selectedOption, dimensionsGroup),
-    //   };
-    //   res = await axios.post(
-    //     `${process.env.REACT_APP_BACKEND_API}/generate/text-to-image`,
-    //     data
-    //   );
-    // } else {
-    //   const data = new FormData();
-    //   data.append("user", JSON.parse(user).email);
-    //   data.append("text", promptText);
-    //   data.append("model", generationModel?.id || "");
-    //   data.append("alchemy", alchemy ? "true" : "false");
-    //   data.append("presetStyle", generationStyle);
-    //   data.append("numberOfImages", selectedNumber.toString());
-    //   data.append(
-    //     "dimension",
-    //     findDimensionById(selectedOption, dimensionsGroup)
-    //   );
-    //   data.append("density", densityValue.toString());
-    //   data.append("image", imageSrc || "");
-    //   console.log(data);
-    //   res = await axios.post(
-    //     `${process.env.REACT_APP_BACKEND_API}/generate/image-to-image`,
-    //     data
-    //   );
-    // }
-    // if (res.data.message === "Success") {
-    //   console.log("Success");
-    // } else {
-    //   console.log("Failed");
-    // }
-    // setGenerating(false);
-    // updateLibrary();
+    setGenerating(true);
+    var res;
+    if (activeTab === "generationHistory") {
+      const data = {
+        user: JSON.parse(user).email,
+        text: promptText,
+        model: generationModel?.id,
+        alchemy: alchemy,
+        presetStyle: generationStyle,
+        numberOfImages: selectedNumber,
+        dimension: findDimensionById(selectedOption, dimensionsGroup),
+      };
+      res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_API}/generate/text-to-image`,
+        data
+      );
+    } else {
+      const data = new FormData();
+      data.append("user", JSON.parse(user).email);
+      data.append("text", promptText);
+      data.append("model", generationModel?.id || "");
+      data.append("alchemy", alchemy ? "true" : "false");
+      data.append("presetStyle", generationStyle);
+      data.append("numberOfImages", selectedNumber.toString());
+      data.append(
+        "dimension",
+        findDimensionById(selectedOption, dimensionsGroup)
+      );
+      data.append("density", densityValue.toString());
+      data.append("image", imageSrc || "");
+      console.log(data);
+      res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_API}/generate/image-to-image`,
+        data
+      );
+    }
+    if (res.data.message === "Success") {
+      console.log("Success");
+    } else {
+      console.log("Failed");
+    }
+    setGenerating(false);
+    updateLibrary();
   };
 
   const updateLibrary = () => {
