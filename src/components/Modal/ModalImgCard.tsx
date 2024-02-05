@@ -221,13 +221,13 @@ const ModalImgCard = ({ onPrevImage, onNextImage, onUpdate }: any) => {
         abi: MarketFactoryABI,
         data: data.logs[data.logs.length - 2].data,
         topics: data.logs[data.logs.length - 2].topics,
-      } as DecodeEventLogParameters
+      } as DecodeEventLogParameters;
 
       const result = decodeEventLog(config);
 
       console.log("-----------result---------", result);
       tokenId = (result.args as any).tokenId;
-      console.log('tokenId', tokenId)
+      console.log("tokenId", tokenId);
     } catch (e) {
       console.log(e);
       toast.update(id2, {
@@ -237,9 +237,10 @@ const ModalImgCard = ({ onPrevImage, onNextImage, onUpdate }: any) => {
       setMinting(false);
       return;
     }
-    console.log('--------process.env.REACT_APP_MARKETPLACE_API_ENDPOINT--------', 
-    process.env.REACT_APP_MARKETPLACE_API_ENDPOINT
-    )
+    console.log(
+      "--------process.env.REACT_APP_MARKETPLACE_API_ENDPOINT--------",
+      process.env.REACT_APP_MARKETPLACE_API_ENDPOINT
+    );
     try {
       const chainId = chain ? chain.id : 56;
       const data = {
