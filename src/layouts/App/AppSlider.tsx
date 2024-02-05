@@ -34,8 +34,10 @@ const AppSlider = ({
   return (
     <>
       <div
-        className={`flex flex-col z-50 border-r border-primary bg-black w-[270px] min-w-[270px] pt-[10px] transition-all duration-300 ease-in-out ${
-          sliderOpen ? "sm:w-full sm:max-w-full fixed" : "sm:hidden"
+        className={`flex flex-col z-50 border-r border-primary bg-black w-[270px] min-w-[270px] pt-[10px] transition-all duration-1000 ease-in-out ${
+          sliderOpen
+            ? "sm:w-full sm:max-w-full fixed anim-width min-h-screen h-full"
+            : "sm:hidden sm:w-0 sm:max-w-0"
         }`}
       >
         <div className="pt-[19px] flex flex-row justify-between w-full items-center px-10">
