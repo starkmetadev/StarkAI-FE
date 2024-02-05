@@ -35,13 +35,13 @@ const Navbar = () => {
               </Link>
             ))}
             <div className="social-links">
-              <a href="https://discord.gg/starkmeta">
+              <Link to="https://discord.gg/starkmeta">
                 <img
                   src="/assets/img/discord.svg"
                   alt="discord"
                   className="w-[18px]"
                 />
-              </a>
+              </Link>
             </div>
           </div>
           <span className="h-10 w-[2px] bg-white opacity-20"></span>
@@ -89,11 +89,11 @@ const Navbar = () => {
           </div>
           <ul className="p-0 relative top-1/2 w-[80%] mx-auto my-0 transform translate-y-[-50%]">
             <li className="fadeInLeft text-center opacity-0 animate-delay-300">
-              <a href="#" className="p-0">
+              <Link to="/" className="p-0">
                 <span className="p-[10px] border-none inline-block">
                   <img src="/favicon.ico" alt="Logo"></img>
                 </span>
-              </a>
+              </Link>
             </li>
             {navbarMenuItems.map((item, index) => {
               return (

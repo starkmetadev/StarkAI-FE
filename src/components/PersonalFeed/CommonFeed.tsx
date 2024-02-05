@@ -2,16 +2,23 @@ import { Icon } from "@iconify/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { ImageList, ImageListItem, Slider } from "@mui/material";
-
 import { useUser } from "../../context/UserContext";
 import ModalContext from "../../utils/modalContext";
 import { Image } from "../../utils/types";
 import Card from "../Others/Card";
 import ModalImgCard from "../Modal/ModalImgCard";
-import useWindowSize from "../../hooks/useWindowSize";
+import useWindowWidth from "../../hooks/useWindowSize";
+
+const breakpoints = [
+  { width: 1200, maxStretch: 5 },
+  { width: 1024, maxStretch: 4 },
+  { width: 768, maxStretch: 3 },
+  { width: 480, maxStretch: 2 },
+  { width: 0, maxStretch: 1 }, // default for all widths below 480
+];
 
 const CommonFeed = () => {
-  const windowSize = useWindowSize();
+  const windowSize = useWindowWidth();
   const [activeButton, setActiveButton] = useState(true);
   const [searchKey, setSearchKey] = useState("");
   const { user }: any = useUser();
@@ -71,18 +78,49 @@ const CommonFeed = () => {
     setSearched(true);
   };
   console.log(maxStretch, curVal);
-  useEffect(() => {
-    const wid = windowSize[0];
-    if (wid > 1200 && maxStretch !== 5) setMaxStretch(5);
-    if (wid > 1000 && wid <= 1200 && maxStretch !== 4) setMaxStretch(4);
-    if (wid > 768 && wid <= 1000 && maxStretch !== 3) setMaxStretch(3);
-    if (wid > 480 && wid <= 768 && maxStretch !== 2) setMaxStretch(2);
-    if (wid <= 480 && maxStretch !== 1) setMaxStretch(1);
-  }, [windowSize]);
 
   useEffect(() => {
-    if (curVal > maxStretch) setCurVal(maxStretch);
-  }, [maxStretch]);
+    const updateValues = () => {
+      const currentWidth = windowSize;
+
+      console.log("current size: ", currentWidth);
+      // Find the first match where the current width is greater than the breakpoint's width
+      const matchingBreakpoint = breakpoints.find(
+        ({ width }) => currentWidth > width
+      );
+
+      if (matchingBreakpoint) {
+        const { maxStretch: newMaxStretch } = matchingBreakpoint;
+
+        if (maxStretch !== newMaxStretch) {
+          setMaxStretch(newMaxStretch);
+        }
+
+        // Adjust curVal only if necessary
+        if (curVal > newMaxStretch) {
+          setCurVal(newMaxStretch);
+        }
+      } else {
+        // Handle case where no breakpoints are found (if applicable)
+        // For example, set default values or throw an error.
+      }
+    };
+
+    updateValues();
+  }, [windowSize, maxStretch, curVal]);
+
+  // useEffect(() => {
+  //   const wid = windowSize[0];
+  //   if (wid > 1200 && maxStretch !== 5) setMaxStretch(5);
+  //   if (wid > 1000 && wid <= 1200 && maxStretch !== 4) setMaxStretch(4);
+  //   if (wid > 768 && wid <= 1000 && maxStretch !== 3) setMaxStretch(3);
+  //   if (wid > 480 && wid <= 768 && maxStretch !== 2) setMaxStretch(2);
+  //   if (wid <= 480 && maxStretch !== 1) setMaxStretch(1);
+  // }, [windowSize]);
+
+  // useEffect(() => {
+  //   if (curVal > maxStretch) setCurVal(maxStretch);
+  // }, [maxStretch]);
 
   const handleStretch = (event: Event, newValue: number | number[]) => {
     setCurVal(newValue as number);
@@ -138,7 +176,7 @@ const CommonFeed = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-row justify-between gap-4">
+              <div className="flex flex-row justify-between gap-4 flex-wrap">
                 <div className="flex bg-[#0c0f16] overflow-hidden rounded-lg">
                   <button
                     className={`button-item w-[116px] ${
@@ -163,7 +201,7 @@ const CommonFeed = () => {
                     <div className="button-cover"></div>
                   </button>
                 </div>
-                <div className="w-[200px]">
+                <div className="w-[200px] h-[30px]">
                   <Slider
                     aria-label="Volume"
                     min={1}
