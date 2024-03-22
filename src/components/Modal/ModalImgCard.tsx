@@ -412,7 +412,7 @@ const ModalImgCard = ({ onPrevImage, onNextImage, onUpdate }: any) => {
       strength: densityValue,
       imageData: tmpData,
     };
-    socket.emit("image-to-motion", data);
+    // socket.emit("image-to-motion", data);
   };
 
   useEffect(() => {

@@ -385,7 +385,7 @@ const ImageGeneration = () => {
           presetStyle: generationStyle,
           numberOfImages: selectedNumber,
           dimension: lockOpened
-            ? `${sliderWidthDimension} * ${sliderHeightDimension}`
+            ? `${sliderWidthDimension}*${sliderHeightDimension}`
             : selectedOption,
           negative_prompt: negativePromptText,
         };
@@ -405,7 +405,7 @@ const ImageGeneration = () => {
           image: imgData,
           negative_prompt: negativePromptText,
         };
-        socket.emit("image-to-image", data);
+        // socket.emit("image-to-image", data);
       }
     } catch (e) {
       setGenerating(false);
