@@ -49,7 +49,7 @@ const userSelectedModelItem: ModelItem = {
 
 const tabs = [
   { id: "generationHistory", text: "Generation History" },
-  { id: "imgGuidance", text: "Image Guidance" },
+  // { id: "imgGuidance", text: "Image Guidance" },
 ];
 
 const ImageGeneration = () => {
@@ -338,7 +338,7 @@ const ImageGeneration = () => {
 
   const { chain } = useNetwork();
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (type) => {
     // if (!isConnected) {
     //   toast.warning("Connect wallet first!", {
     //     autoClose: 2000,
@@ -347,69 +347,85 @@ const ImageGeneration = () => {
     //   return;
     // }
     setGenerating(true);
-    // const chainId = chain ? chain.id : 97;
-    // const tradeToken: any = await readContract({
-    //   address: MarketPlace[chainId],
-    //   abi: MarketPlaceABI,
-    //   functionName: "tradeToken",
-    // });
-    // const generateImageFee: any = await readContract({
-    //   address: MarketPlace[chainId],
-    //   abi: MarketPlaceABI,
-    //   functionName: "generateImageFee",
-    // });
-
-    try {
-      // let tx = await writeContract({
-      //   address: tradeToken,
-      //   abi: ERC20ABI,
-      //   functionName: "approve",
-      //   args: [MarketPlace[chainId], generateImageFee],
-      // });
-      // console.log(tx);
-      // let data = await waitForTransaction(tx);
-      // console.log("-------data-------", data);
-      // tx = await writeContract({
+    if (type == 1) {
+      // const chainId = chain ? chain.id : 97;
+      // const tradeToken: any = await readContract({
       //   address: MarketPlace[chainId],
       //   abi: MarketPlaceABI,
-      //   functionName: "generateImage",
+      //   functionName: "tradeToken",
       // });
-      // data = await waitForTransaction(tx);
-      // console.log("-------data-2------", data);
-      if (activeTab === "generationHistory") {
-        const data = {
-          user: JSON.parse(user).email,
-          text: promptText,
-          model: generationModel?.id,
-          alchemy: alchemy,
-          presetStyle: generationStyle,
-          numberOfImages: selectedNumber,
-          dimension: lockOpened
-            ? `${sliderWidthDimension}*${sliderHeightDimension}`
-            : selectedOption,
-          negative_prompt: negativePromptText,
-        };
-        socket.emit("text-to-image", data);
-      } else {
-        const data = {
-          user: JSON.parse(user).email,
-          text: promptText,
-          model: generationModel?.id || "",
-          alchemy: alchemy ? "true" : "false",
-          presetStyle: generationStyle,
-          numberOfImages: selectedNumber.toString(),
-          dimension: lockOpened
-            ? `${sliderWidthDimension} * ${sliderHeightDimension}`
-            : selectedOption,
-          density: densityValue.toString(),
-          image: imgData,
-          negative_prompt: negativePromptText,
-        };
-        // socket.emit("image-to-image", data);
+      // const generateImageFee: any = await readContract({
+      //   address: MarketPlace[chainId],
+      //   abi: MarketPlaceABI,
+      //   functionName: "generateImageFee",
+      // });
+
+      try {
+        // let tx = await writeContract({
+        //   address: tradeToken,
+        //   abi: ERC20ABI,
+        //   functionName: "approve",
+        //   args: [MarketPlace[chainId], generateImageFee],
+        // });
+        // console.log(tx);
+        // let data = await waitForTransaction(tx);
+        // console.log("-------data-------", data);
+        // tx = await writeContract({
+        //   address: MarketPlace[chainId],
+        //   abi: MarketPlaceABI,
+        //   functionName: "generateImage",
+        // });
+        // data = await waitForTransaction(tx);
+        // console.log("-------data-2------", data);
+        if (activeTab === "generationHistory") {
+          const data = {
+            user: JSON.parse(user).email,
+            text: promptText,
+            model: generationModel?.id,
+            alchemy: alchemy,
+            presetStyle: generationStyle,
+            numberOfImages: selectedNumber,
+            dimension: lockOpened
+              ? `${sliderWidthDimension}*${sliderHeightDimension}`
+              : selectedOption,
+            negative_prompt: negativePromptText,
+          };
+          socket.emit("text-to-image", data);
+        } else {
+          const data = {
+            user: JSON.parse(user).email,
+            text: promptText,
+            model: generationModel?.id || "",
+            alchemy: alchemy ? "true" : "false",
+            presetStyle: generationStyle,
+            numberOfImages: selectedNumber.toString(),
+            dimension: lockOpened
+              ? `${sliderWidthDimension} * ${sliderHeightDimension}`
+              : selectedOption,
+            density: densityValue.toString(),
+            image: imgData,
+            negative_prompt: negativePromptText,
+          };
+          // socket.emit("image-to-image", data);
+        }
+      } catch (e) {
+        setGenerating(false);
+        return;
       }
-    } catch (e) {
-      setGenerating(false);
-      return;
+    } else {
+      const data = {
+        user: JSON.parse(user).email,
+        text: promptText,
+        model: generationModel?.id,
+        alchemy: alchemy,
+        presetStyle: generationStyle,
+        numberOfImages: selectedNumber,
+        dimension: lockOpened
+          ? `${sliderWidthDimension}*${sliderHeightDimension}`
+          : selectedOption,
+        negative_prompt: negativePromptText,
+      };
+      socket.emit("text-to-video", data);
     }
   };
 
@@ -470,20 +486,37 @@ const ImageGeneration = () => {
                 value={promptText}
                 onChange={handlePromptTextChange}
               />
-              <span className="inline-block sm:hidden md:hidden">
+              <span className="flex sm:hidden md:hidden">
                 <button
                   className="button-generate"
                   disabled={!promptText || generating}
-                  onClick={handleGenerate}
+                  onClick={() => handleGenerate(1)}
                 >
                   <span className="flex flex-row items-center gap-[10px] justify-center">
                     <span className="font-chakra text-[18px] font-medium">
-                      {generating ? "Generating..." : "Generate"}
+                      {generating ? "Generating Image..." : "Generate Image"}
                     </span>
                     {!generating && (
                       <span className="flex flex-row items-center justify-center gap-1">
                         <Icon icon="game-icons:cash" className="w-5 h-5" />
                         <span className="text-[16px] font-medium">2</span>
+                      </span>
+                    )}
+                  </span>
+                </button>
+                <button
+                  className="button-generate"
+                  disabled={!promptText || generating}
+                  onClick={() => handleGenerate(2)}
+                >
+                  <span className="flex flex-row items-center gap-[10px] justify-center">
+                    <span className="font-chakra text-[18px] font-medium">
+                      {generating ? "Generating Video..." : "Generate Video"}
+                    </span>
+                    {!generating && (
+                      <span className="flex flex-row items-center justify-center gap-1">
+                        <Icon icon="game-icons:cash" className="w-5 h-5" />
+                        <span className="text-[16px] font-medium">8&nbsp;</span>
                       </span>
                     )}
                   </span>

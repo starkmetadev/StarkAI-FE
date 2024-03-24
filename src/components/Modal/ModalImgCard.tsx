@@ -298,16 +298,16 @@ const ModalImgCard = ({ onPrevImage, onNextImage, onUpdate }: any) => {
   }, [modalCtx.visible]);
 
   const handleDownload = async () => {
-    const url = `${imageData.image}_ORIGIN`;
-    const tmpUrl = await axios.post(
-      `${process.env.REACT_APP_BACKEND_API}/getSignedUrl`,
-      { url: url }
-    );
-    console.log(tmpUrl.data);
+    let url = `${imageData.image}`;
+    // const tmpUrl = await axios.post(
+    //   `${process.env.REACT_APP_BACKEND_API}/getSignedUrl`,
+    //   { url: url }
+    // );
+    // console.log(tmpUrl.data);
+    console.log(url);
     try {
-      const res = await axios.get(tmpUrl.data, {
-        responseType: "blob",
-      });
+      const res = await axios.get(url);
+      console.log(res);
       // console.log(p);
       // const res = await fetch(tmpUrl.data);
       const pos = url.lastIndexOf("/");
