@@ -22,12 +22,12 @@ const ImageDimensionsGroup = [
   "1024 * 1024",
 ];
 const InputDimensionsGroup = [
-  "512 * 768",
-  "768 * 512",
-  "1024 * 768",
+  "512 * 512",
+  "768 * 768",
+  "512 * 1024",
   "768 * 1024",
-  "1360 * 768",
-  "768 * 1360",
+  "1024 * 768",
+  "1024 * 1024",
 ];
 
 export interface ModelItem {
