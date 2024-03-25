@@ -306,7 +306,7 @@ const ModalImgCard = ({ onPrevImage, onNextImage, onUpdate }: any) => {
     // console.log(tmpUrl.data);
     console.log(url);
     try {
-      const res = await axios.get(url);
+      const res = await axios.get(url, { responseType: "blob" });
       console.log(res);
       // console.log(p);
       // const res = await fetch(tmpUrl.data);
@@ -316,7 +316,6 @@ const ModalImgCard = ({ onPrevImage, onNextImage, onUpdate }: any) => {
       console.log(name);
       if (res.status === 200) {
         // const blob = await res.blob();
-        console.log("----------blob--------", res.data);
         const blobUrl = URL.createObjectURL(res.data);
 
         // Create a temporary anchor element and trigger a download
