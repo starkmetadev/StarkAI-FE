@@ -84,6 +84,7 @@ const ImageGeneration = () => {
   const [densityValue, setDensityValue] = useState<number>(50);
   const uploadImgRef = useRef<HTMLInputElement>(null);
   const [imgData, setImgData] = useState<any>(null);
+  const [pendingImage, setPendingImage] = useState<Image>(null);
   const { isConnected } = useAccount();
   const [sliderWidthDimension, setSliderWidthDimension] = useState<number>(512);
   const [sliderHeightDimension, setSliderHeightDimension] =
@@ -298,7 +299,7 @@ const ImageGeneration = () => {
   const handleDensityChange = (event: Event, newValue: number | number[]) => {
     setDensityValue(newValue as number);
   };
-
+  console.log(pendingImage);
   useEffect(() => {
     socket.on("Image Saved", (data) => {
       console.log(data);
@@ -312,6 +313,7 @@ const ImageGeneration = () => {
       console.log(data);
       updateLibrary();
       setGenerating(false);
+      setPendingImage(null);
     });
 
     socket.on("Motion Saved", (data) => {
@@ -390,6 +392,22 @@ const ImageGeneration = () => {
               : selectedOption,
             negative_prompt: negativePromptText,
           };
+          const tmp = data.dimension.split("*");
+          setPendingImage({
+            image: "",
+            generationID: "",
+            owner: "",
+            created: "",
+            data: {
+              alchemy: data.alchemy,
+              modelId: data.model,
+              num_image: data.numberOfImages,
+              presetStyle: data.presetStyle,
+              prompt: data.text,
+              width: parseInt(tmp[0]),
+              height: parseInt(tmp[1]),
+            },
+          });
           socket.emit("text-to-image", data);
         } else {
           const data = {
@@ -425,6 +443,22 @@ const ImageGeneration = () => {
           : selectedOption,
         negative_prompt: negativePromptText,
       };
+      const tmp = data.dimension.split("*");
+      setPendingImage({
+        image: "",
+        generationID: "",
+        owner: "",
+        created: "",
+        data: {
+          alchemy: data.alchemy,
+          modelId: data.model,
+          num_image: data.numberOfImages,
+          presetStyle: data.presetStyle,
+          prompt: data.text,
+          width: parseInt(tmp[0]),
+          height: parseInt(tmp[1]),
+        },
+      });
       socket.emit("text-to-video", data);
     }
   };
@@ -692,6 +726,9 @@ const ImageGeneration = () => {
 
           {/* Tab Content */}
           <div className="border-primary sm:px-4 px-8 sm:mt-3 mt-5">
+            {pendingImage != null && (
+              <CreatedImageItem imageData={pendingImage} />
+            )}
             {activeTab === "generationHistory" &&
               imageData.map((item, index) => (
                 <CreatedImageItem
@@ -701,6 +738,7 @@ const ImageGeneration = () => {
                   key={index}
                 />
               ))}
+
             {activeTab === "imgGuidance" && (
               <ImageGuidance
                 imageSrc={imageSrc}

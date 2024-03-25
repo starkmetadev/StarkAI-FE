@@ -5,11 +5,12 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { changeDateFormat } from "../../utils/changeDateFormat";
 import { ModelItems } from "../../utils/constants";
 import { Alchemy } from "../../assets";
+import { ClipLoader } from "react-spinners";
 
 interface CreatedImageItemProps {
   imageData: any;
-  PromptHandler: (param1: string, param2: string) => void;
-  deleteImage: (image: string) => void;
+  PromptHandler?: (param1: string, param2: string) => void;
+  deleteImage?: (image: string) => void;
 }
 
 const CreatedImageItem: React.FC<CreatedImageItemProps> = ({
@@ -24,7 +25,7 @@ const CreatedImageItem: React.FC<CreatedImageItemProps> = ({
   const handleCopy = (target: string) => {
     setIsCopied(target);
   };
-
+  console.log(imageData);
   const currentModel = ModelItems.find(
     (ModelItem) => ModelItem.id === Image.data.modelId
   );
@@ -33,7 +34,7 @@ const CreatedImageItem: React.FC<CreatedImageItemProps> = ({
     <div className="pt-5 font-chakra">
       <div className="w-full flex flex-col gap-3">
         <span className="w-full text-center py-3 text-[#494E5B]">
-          {changeDateFormat(Image.created)}
+          {Image.created != "" && changeDateFormat(Image.created)}
         </span>
         <div className="flex flex-row w-full flex-wrap gap-1">
           <div className="flex flex-row w-1/2">
@@ -138,22 +139,33 @@ const CreatedImageItem: React.FC<CreatedImageItemProps> = ({
           </div>
         </div>
         <div className="w-1/2 pt-2 relative min-h-[380px]">
-          {!isLoaded && (
+          {/* {!isLoaded && (
             <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-gray-300 rounded-lg">
               Loading...
+            </div>
+          )} */}
+          {Image.image === "" && (
+            <div
+              className="flex items-center justify-center"
+              style={{ width: "560px", height: "380px" }}
+            >
+              <ClipLoader size={50} color="white" />
             </div>
           )}
           {Image.image.endsWith(".mp4") ? (
             <>
               <video
+                id="videocontainer1"
+                autoPlay
                 loop
                 disableRemotePlayback
                 muted
-                className="rounded-md"
-                onLoadedData={() => setIsLoaded(false)}
-                onError={() => setIsLoaded(false)}
               >
-                <source type="video/mp4" src={Image.image} />
+                <source
+                  id="videosource1"
+                  type="video/mp4"
+                  src={imageData.image}
+                />
               </video>
             </>
           ) : (
